@@ -6,7 +6,9 @@ CREATE TABLE status (
 INSERT INTO status (status_id, status_name) VALUES
 (1, 'NEW'),
 (2, 'IN_PROGRESS'),
-(3, 'COMPLETED');
+(3, 'COMPLETED'),
+(4, 'BLOCKED'),
+(5, 'DEFERRED');
 
 CREATE TABLE priority (
     priority_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,

@@ -3,7 +3,9 @@ package com.tutorial.entity;
 public enum TaskStatus {
     NEW(1),
     IN_PROGRESS(2),
-    COMPLETED(3);
+    COMPLETED(3),
+    BLOCKED(4),
+    DEFERRED(5);
 
     private final int id;
 
