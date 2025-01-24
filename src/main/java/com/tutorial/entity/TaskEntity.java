@@ -25,13 +25,13 @@ public class TaskEntity {
     @SequenceGenerator(name = "my_entity_seq", sequenceName = "my_entity_seq", allocationSize = 1)
     private Long taskId;
 
-    @Size(max=100, message = "Cannot exceed 100 characters")
+    @Size(max = 100, message = "Cannot exceed 100 characters")
     @JsonProperty("summary")
     @NotBlank(message = "Task summary is required")
     private String taskSummary;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    @Column(nullable = false, updatable = false, name="created_at")
+    @Column(nullable = false, updatable = false, name = "created_at")
     @CreatedDate
     @JsonProperty("created_at")
     private LocalDateTime createdAt;
@@ -69,6 +69,7 @@ public class TaskEntity {
     @Column(columnDefinition = "DATE")
     @JsonProperty("due_date")
     private LocalDate dueDate = LocalDate.now().plus(1, ChronoUnit.MONTHS);
+
     public TaskEntity() {
     }
 

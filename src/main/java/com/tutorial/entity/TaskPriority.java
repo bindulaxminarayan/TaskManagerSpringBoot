@@ -12,13 +12,14 @@ public enum TaskPriority {
     TaskPriority(int id) {
         this.id = id;
     }
-    public int getId(){
+
+    public int getId() {
         return id;
     }
 
-    public static TaskPriority fromId(int id){
-        for(TaskPriority priority: values()){
-            if(priority.getId() == id){
+    public static TaskPriority fromId(int id) {
+        for (TaskPriority priority : values()) {
+            if (priority.getId() == id) {
                 return priority;
             }
         }

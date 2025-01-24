@@ -47,7 +47,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-       logger.info("Exception occurred:"+ex.getMessage());
+        logger.info("Exception occurred:" + ex.getMessage());
         Map<String, Object> errorDetails = new HashMap<>();
         // Extract JSON property names dynamically
         Map<String, String> fieldMappings = getFieldMappings(TaskEntity.class);
@@ -63,8 +63,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<Map<String, Object>> handleBadRequestException(BadRequestException ex){
-        logger.info("Received Bad Request Exception:"+ex.toString());
+    public ResponseEntity<Map<String, Object>> handleBadRequestException(BadRequestException ex) {
+        logger.info("Received Bad Request Exception:" + ex.toString());
         Map<String, Object> errorDetails = new HashMap<>();
         errorDetails.put("timestamp", LocalDateTime.now().format(TIMESTAMP_FORMATTER));
         errorDetails.put("status", HttpStatus.BAD_REQUEST.value());
@@ -73,7 +73,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<Map<String, Object>> handleTypeMismatchException(MethodArgumentTypeMismatchException ex){
+    public ResponseEntity<Map<String, Object>> handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         Map<String, Object> errorDetails = new HashMap<>();
         errorDetails.put("timestamp", LocalDateTime.now());
         errorDetails.put("status", HttpStatus.BAD_REQUEST.value());

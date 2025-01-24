@@ -77,7 +77,7 @@ public class TaskServiceImpl implements TaskService {
             return null;
         }
         try {
-            logger.info("Enum value:"+Enum.valueOf(enumType, value.toUpperCase()));
+            logger.info("Enum value:" + Enum.valueOf(enumType, value.toUpperCase()));
             return Enum.valueOf(enumType, value.toUpperCase());
         } catch (IllegalArgumentException ex) {
             throw new BadRequestException(errorMessage);
@@ -88,10 +88,10 @@ public class TaskServiceImpl implements TaskService {
         if (taskStatus != null && taskPriority != null) {
             return taskRepository.findByTaskStatusAndTaskPriority(taskStatus, taskPriority);
         } else if (taskStatus != null) {
-            logger.info("Task status"+taskStatus);
+            logger.info("Task status" + taskStatus);
             return taskRepository.findByTaskStatus(taskStatus);
         } else if (taskPriority != null) {
-            logger.info("Task priority"+taskPriority);
+            logger.info("Task priority" + taskPriority);
             return taskRepository.findByTaskPriority(taskPriority);
         } else {
             return taskRepository.findAll();

@@ -9,8 +9,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TaskRepository extends JpaRepository<TaskEntity,Long> {
+public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
     List<TaskEntity> findByTaskStatus(TaskStatus taskStatus);
+
     List<TaskEntity> findByTaskPriority(TaskPriority taskPriority);
+
     List<TaskEntity> findByTaskStatusAndTaskPriority(TaskStatus taskStatus, TaskPriority priority);
 }

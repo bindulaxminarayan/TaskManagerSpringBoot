@@ -33,8 +33,8 @@ public class TaskController {
 
     @GetMapping("/tasks")
     public TasksResponseDTO getTasks(
-            @RequestParam(value="status", required = false) String status,
-            @RequestParam(value="priority", required = false) String priority
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "priority", required = false) String priority
     ) throws BadRequestException {
         return taskService.getTasks(status, priority);
     }
@@ -48,10 +48,6 @@ public class TaskController {
     public ResponseEntity<TaskEntity> updateTaskById(
             @PathVariable Long id,
             @RequestBody Map<String, Object> updates) throws BadRequestException {
-//        String status = requestBody.get("status");
-//        if (status == null || status.isBlank()) {
-//            throw new BadRequestException("Status must be provided");
-//        }
 
         TaskEntity updatedTask = taskService.updateTask(id, updates);
         return ResponseEntity.ok(updatedTask);
