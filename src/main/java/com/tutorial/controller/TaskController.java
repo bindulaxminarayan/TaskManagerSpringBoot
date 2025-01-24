@@ -8,9 +8,11 @@ import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class TaskController {
@@ -40,5 +42,19 @@ public class TaskController {
     @GetMapping("/tasks/{id}")
     public TaskEntity getTaskById(@Valid @PathVariable(name = "id") Long id) throws BadRequestException {
         return taskService.getTaskById(id).orElseThrow(() -> new BadRequestException("Task with id:" + id + "does not exist"));
+    }
+
+    @PatchMapping("/tasks/{id}")
+    public ResponseEntity<TaskEntity> updateTaskById(
+            @PathVariable Long id,
+            @RequestBody Map<String, Object> updates) throws BadRequestException {
+//        String status = requestBody.get("status");
+//        if (status == null || status.isBlank()) {
+//            throw new BadRequestException("Status must be provided");
+//        }
+
+        TaskEntity updatedTask = taskService.updateTask(id, updates);
+        return ResponseEntity.ok(updatedTask);
+
     }
 }

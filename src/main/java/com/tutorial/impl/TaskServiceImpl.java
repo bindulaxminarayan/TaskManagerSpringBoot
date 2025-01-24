@@ -13,7 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -98,4 +102,61 @@ public class TaskServiceImpl implements TaskService {
     public Optional<TaskEntity> getTaskById(Long taskId) {
         return taskRepository.findById(taskId);
     }
+
+    @Override
+    public TaskEntity updateTask(Long id, Map<String, Object> updates) throws BadRequestException {
+        // Retrieve the existing task
+        TaskEntity task = taskRepository.findById(id).orElseThrow(() ->
+                new BadRequestException("Task not found with ID: " + id));
+
+        // Update fields if present
+        for (Map.Entry<String, Object> entry : updates.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            switch (key) {
+                case "summary":
+                    task.setTaskSummary((String) value);
+                    break;
+                case "due_date":
+                    if (value != null) {
+                        try {
+                            task.setDueDate(LocalDate.parse((String) value));
+                        } catch (DateTimeParseException ex) {
+                            throw new BadRequestException("Invalid date format for due_date. Expected format: yyyy-MM-dd");
+                        }
+                    } else {
+                        task.setDueDate(null);
+                    }
+                    break;
+                case "notes":
+                    task.setTaskNotes((String) value);
+                    break;
+                case "priority":
+                    if (value != null) {
+                        try {
+                            task.setTaskPriority(TaskPriority.valueOf(((String) value).toUpperCase()));
+                        } catch (IllegalArgumentException ex) {
+                            throw new BadRequestException("Invalid priority value: " + value);
+                        }
+                    }
+                    break;
+                case "status":
+                    if (value != null) {
+                        try {
+                            task.setTaskStatus(TaskStatus.valueOf(((String) value).toUpperCase()));
+                        } catch (IllegalArgumentException ex) {
+                            throw new BadRequestException("Invalid status value: " + value);
+                        }
+                    }
+                    break;
+                default:
+                    throw new BadRequestException("Unknown field: " + key);
+            }
+        }
+
+        // Update the timestamp and save
+        task.setUpdatedAt(LocalDateTime.now());
+        return taskRepository.save(task);
+    }
+
 }
