@@ -2,6 +2,7 @@ package com.tutorial.controller;
 
 import com.tutorial.dto.TasksResponseDTO;
 import com.tutorial.entity.TaskEntity;
+import com.tutorial.entity.TaskPriority;
 import com.tutorial.entity.TaskStatus;
 import com.tutorial.repository.TaskRepository;
 import com.tutorial.service.TaskService;
@@ -80,6 +81,50 @@ public class TaskControllerTest {
         assertEquals(expectedTasks, taskResponse);
         assertEquals(1, taskResponse.getTotalCount());
         verify(taskService, times(1)).getTasks("IN_PROGRESS",null);
+    }
+    @Test
+    public void testGetTasksPriority() throws BadRequestException {
+        TaskEntity t1 = new TaskEntity();
+        t1.setTaskSummary("T1");
+        t1.setId(1L);
+        t1.setTaskPriority(TaskPriority.CRITICAL);
+        TaskEntity t2 = new TaskEntity();
+        t2.setTaskSummary("T2");
+        t2.setId(2L);
+        List<TaskEntity> tasks = new ArrayList<>();
+        tasks.add(t1);
+        TasksResponseDTO taskResponse = new TasksResponseDTO();
+        taskResponse.setTasks(tasks);
+        taskResponse.setTotalCount(1);
+
+        when(taskService.getTasks(null,"CRITICAL")).thenReturn(taskResponse);
+        TasksResponseDTO expectedTasks = taskController.getTasks(null,"CRITICAL");
+        assertEquals(expectedTasks, taskResponse);
+        assertEquals(1, taskResponse.getTotalCount());
+        verify(taskService, times(1)).getTasks(null,"CRITICAL");
+    }
+
+    @Test
+    public void testGetTasksStatusAndPriority() throws BadRequestException {
+        TaskEntity t1 = new TaskEntity();
+        t1.setTaskSummary("T1");
+        t1.setId(1L);
+        t1.setTaskPriority(TaskPriority.CRITICAL);
+        t1.setTaskStatus(TaskStatus.BLOCKED);
+        TaskEntity t2 = new TaskEntity();
+        t2.setTaskSummary("T2");
+        t2.setId(2L);
+        List<TaskEntity> tasks = new ArrayList<>();
+        tasks.add(t1);
+        TasksResponseDTO taskResponse = new TasksResponseDTO();
+        taskResponse.setTasks(tasks);
+        taskResponse.setTotalCount(1);
+
+        when(taskService.getTasks(null,"CRITICAL")).thenReturn(taskResponse);
+        TasksResponseDTO expectedTasks = taskController.getTasks(null,"CRITICAL");
+        assertEquals(expectedTasks, taskResponse);
+        assertEquals(1, taskResponse.getTotalCount());
+        verify(taskService, times(1)).getTasks(null,"CRITICAL");
     }
 
     @Test

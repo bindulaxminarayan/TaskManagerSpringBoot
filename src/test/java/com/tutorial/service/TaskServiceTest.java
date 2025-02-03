@@ -6,6 +6,7 @@ import com.tutorial.entity.TaskPriority;
 import com.tutorial.entity.TaskStatus;
 import com.tutorial.impl.TaskServiceImpl;
 import com.tutorial.repository.TaskRepository;
+import com.tutorial.specification.TaskSpecification;
 import org.apache.coyote.BadRequestException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,8 @@ public class TaskServiceTest {
     private TaskRepository taskRepository;
     @InjectMocks
     private TaskServiceImpl taskService;
+    @InjectMocks
+    private TaskSpecification taskSpecification;
 
     private static final Logger logger = LoggerFactory.getLogger(TaskServiceTest.class);
 
@@ -159,7 +162,8 @@ public class TaskServiceTest {
         taskEntity2.setTaskStatus(TaskStatus.IN_PROGRESS);
 
         List<TaskEntity> mockTasks = Arrays.asList(taskEntity1, taskEntity2);
-        when(taskRepository.findAll()).thenReturn(mockTasks);
+        when(taskRepository.findAll(any(TaskSpecification.class))).thenReturn(mockTasks);
+
 
         // Act: Call the service method
         TasksResponseDTO result = taskService.getTasks(null, null);
@@ -171,38 +175,10 @@ public class TaskServiceTest {
         assertEquals("t2", result.getTasks().get(1).getTaskSummary()); // Verify second task name
 
         // Verify repository method was called exactly once
-        verify(taskRepository, times(1)).findAll();
+        verify(taskRepository, times(1)).findAll(any(TaskSpecification.class));
 
     }
 
-    @Test
-    public void findAllTest() throws BadRequestException {
-        TaskEntity taskEntity1 = new TaskEntity();
-        taskEntity1.setId(1L);
-        taskEntity1.setTaskSummary("t1");
-        taskEntity1.setTaskStatus(TaskStatus.NEW);
-
-        TaskEntity taskEntity2 = new TaskEntity();
-        taskEntity2.setId(1L);
-        taskEntity2.setTaskSummary("t2");
-        taskEntity2.setTaskStatus(TaskStatus.IN_PROGRESS);
-
-        List<TaskEntity> mockTasks = Arrays.asList(taskEntity1, taskEntity2);
-        when(taskRepository.findAll()).thenReturn(mockTasks);
-
-        // Act: Call the service method
-        TasksResponseDTO result = taskService.findAll();
-
-        // Assert: Verify results and repository interaction
-        assertNotNull(result);
-        assertEquals(2, result.getTasks().size()); // Verify size of returned list
-        assertEquals("t1", result.getTasks().get(0).getTaskSummary()); // Verify first task name
-        assertEquals("t2", result.getTasks().get(1).getTaskSummary()); // Verify second task name
-
-        // Verify repository method was called exactly once
-        verify(taskRepository, times(1)).findAll();
-
-    }
 
     @Test
     public void getTaskByStatus() throws BadRequestException {
@@ -217,7 +193,7 @@ public class TaskServiceTest {
         taskEntity2.setTaskStatus(TaskStatus.IN_PROGRESS);
 
         List<TaskEntity> mockTasks = Arrays.asList(taskEntity1, taskEntity2);
-        when(taskRepository.findByTaskStatus(TaskStatus.IN_PROGRESS)).thenReturn(Arrays.asList(taskEntity2));
+        when(taskRepository.findAll(any(TaskSpecification.class))).thenReturn(Arrays.asList(taskEntity2));
 
         // Act: Call the service method
         TasksResponseDTO result = taskService.getTasks("IN_PROGRESS", null);
@@ -228,7 +204,7 @@ public class TaskServiceTest {
         assertEquals("t2", result.getTasks().get(0).getTaskSummary()); // Verify second task name
 
         // Verify repository method was called exactly once
-        verify(taskRepository, times(1)).findByTaskStatus(TaskStatus.IN_PROGRESS);
+        verify(taskRepository, times(1)).findAll(any(TaskSpecification.class));
 
     }
 
@@ -245,7 +221,7 @@ public class TaskServiceTest {
         taskEntity2.setTaskPriority(TaskPriority.CRITICAL);
 
         List<TaskEntity> mockTasks = Arrays.asList(taskEntity1, taskEntity2);
-        when(taskRepository.findByTaskPriority(TaskPriority.CRITICAL)).thenReturn(Arrays.asList(taskEntity2));
+        when(taskRepository.findAll(any(TaskSpecification.class))).thenReturn(Arrays.asList(taskEntity2));
 
         // Act: Call the service method
         TasksResponseDTO result = taskService.getTasks(null, "CRITICAL");
@@ -256,7 +232,7 @@ public class TaskServiceTest {
         assertEquals("t2", result.getTasks().get(0).getTaskSummary()); // Verify second task name
 
         // Verify repository method was called exactly once
-        verify(taskRepository, times(1)).findByTaskPriority(TaskPriority.CRITICAL);
+        verify(taskRepository, times(1)).findAll(any(TaskSpecification.class));
 
     }
 

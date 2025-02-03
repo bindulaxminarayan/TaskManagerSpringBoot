@@ -6,6 +6,7 @@ import com.tutorial.entity.TaskPriority;
 import com.tutorial.entity.TaskStatus;
 import com.tutorial.repository.TaskRepository;
 import com.tutorial.service.TaskService;
+import com.tutorial.specification.TaskSpecification;
 import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -63,8 +65,9 @@ public class TaskServiceImpl implements TaskService {
         TaskStatus taskStatus = parseEnumValue(status, TaskStatus.class, "Invalid task status: " + status);
         TaskPriority taskPriority = parseEnumValue(priority, TaskPriority.class, "Invalid task priority: " + priority);
 
-        // Fetch tasks dynamically based on filters
-        List<TaskEntity> tasks = fetchTasks(taskStatus, taskPriority);
+//        // Fetch tasks dynamically based on filters
+//        List<TaskEntity> tasks = fetchTasks(taskStatus, taskPriority);
+        List<TaskEntity> tasks = taskRepository.findAll(new TaskSpecification(taskStatus, taskPriority));
 
         // Prepare the response
         tasksResponse.setTasks(tasks);
@@ -81,20 +84,6 @@ public class TaskServiceImpl implements TaskService {
             return Enum.valueOf(enumType, value.toUpperCase());
         } catch (IllegalArgumentException ex) {
             throw new BadRequestException(errorMessage);
-        }
-    }
-
-    private List<TaskEntity> fetchTasks(TaskStatus taskStatus, TaskPriority taskPriority) {
-        if (taskStatus != null && taskPriority != null) {
-            return taskRepository.findByTaskStatusAndTaskPriority(taskStatus, taskPriority);
-        } else if (taskStatus != null) {
-            logger.info("Task status" + taskStatus);
-            return taskRepository.findByTaskStatus(taskStatus);
-        } else if (taskPriority != null) {
-            logger.info("Task priority" + taskPriority);
-            return taskRepository.findByTaskPriority(taskPriority);
-        } else {
-            return taskRepository.findAll();
         }
     }
 
