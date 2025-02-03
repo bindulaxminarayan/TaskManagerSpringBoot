@@ -54,11 +54,11 @@ public class TaskControllerTest {
         taskResponse.setTasks(tasks);
         taskResponse.setTotalCount(2);
 
-        when(taskService.getTasks(null,null)).thenReturn(taskResponse);
-        TasksResponseDTO expectedTasks = taskController.getTasks(null,null);
+        when(taskService.getTasks(null,null,null)).thenReturn(taskResponse);
+        TasksResponseDTO expectedTasks = taskController.getTasks(null,null, null);
         assertEquals(expectedTasks, taskResponse);
         assertEquals(2, taskResponse.getTotalCount());
-        verify(taskService, times(1)).getTasks(null,null);
+        verify(taskService, times(1)).getTasks(null,null,null);
     }
 
     @Test
@@ -76,11 +76,11 @@ public class TaskControllerTest {
         taskResponse.setTasks(tasks);
         taskResponse.setTotalCount(1);
 
-        when(taskService.getTasks("IN_PROGRESS",null)).thenReturn(taskResponse);
-        TasksResponseDTO expectedTasks = taskController.getTasks("IN_PROGRESS",null);
+        when(taskService.getTasks("IN_PROGRESS",null,null)).thenReturn(taskResponse);
+        TasksResponseDTO expectedTasks = taskController.getTasks("IN_PROGRESS",null,null);
         assertEquals(expectedTasks, taskResponse);
         assertEquals(1, taskResponse.getTotalCount());
-        verify(taskService, times(1)).getTasks("IN_PROGRESS",null);
+        verify(taskService, times(1)).getTasks("IN_PROGRESS",null,null);
     }
     @Test
     public void testGetTasksPriority() throws BadRequestException {
@@ -97,11 +97,11 @@ public class TaskControllerTest {
         taskResponse.setTasks(tasks);
         taskResponse.setTotalCount(1);
 
-        when(taskService.getTasks(null,"CRITICAL")).thenReturn(taskResponse);
-        TasksResponseDTO expectedTasks = taskController.getTasks(null,"CRITICAL");
+        when(taskService.getTasks(null,"CRITICAL",null)).thenReturn(taskResponse);
+        TasksResponseDTO expectedTasks = taskController.getTasks(null,"CRITICAL",null);
         assertEquals(expectedTasks, taskResponse);
         assertEquals(1, taskResponse.getTotalCount());
-        verify(taskService, times(1)).getTasks(null,"CRITICAL");
+        verify(taskService, times(1)).getTasks(null,"CRITICAL",null);
     }
 
     @Test
@@ -120,11 +120,11 @@ public class TaskControllerTest {
         taskResponse.setTasks(tasks);
         taskResponse.setTotalCount(1);
 
-        when(taskService.getTasks(null,"CRITICAL")).thenReturn(taskResponse);
-        TasksResponseDTO expectedTasks = taskController.getTasks(null,"CRITICAL");
+        when(taskService.getTasks(null,"CRITICAL",null)).thenReturn(taskResponse);
+        TasksResponseDTO expectedTasks = taskController.getTasks(null,"CRITICAL",null);
         assertEquals(expectedTasks, taskResponse);
         assertEquals(1, taskResponse.getTotalCount());
-        verify(taskService, times(1)).getTasks(null,"CRITICAL");
+        verify(taskService, times(1)).getTasks(null,"CRITICAL",null);
     }
 
     @Test

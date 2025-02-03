@@ -13,7 +13,7 @@ public interface TaskService {
 
     TasksResponseDTO findAll();
 
-    TasksResponseDTO getTasks(String status, String priority) throws BadRequestException;
+    TasksResponseDTO getTasks(String status, String priority, String dueDate) throws BadRequestException;
 
     Optional<TaskEntity> getTaskById(Long taskId);
 

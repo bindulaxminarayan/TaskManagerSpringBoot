@@ -9,16 +9,23 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TaskSpecification implements Specification<TaskEntity> {
     private final TaskStatus taskStatus;
     private final TaskPriority taskPriority;
+    private final LocalDate dueDate;
+    private final String dueDateOperator;
 
-    public TaskSpecification(TaskStatus taskStatus, TaskPriority taskPriority) {
+
+    public TaskSpecification(TaskStatus taskStatus, TaskPriority taskPriority, LocalDate dueDate, String dueDateOperator) {
         this.taskStatus = taskStatus;
         this.taskPriority = taskPriority;
+        this.dueDate = dueDate;
+        this.dueDateOperator = dueDateOperator;
+
     }
 
     @Override
@@ -30,6 +37,25 @@ public class TaskSpecification implements Specification<TaskEntity> {
         if (taskPriority != null) {
             predicates.add(criteriaBuilder.equal(root.get("taskPriority"), taskPriority));
         }
+        if (dueDate != null) {
+            switch (dueDateOperator) {
+                case ">":
+                    predicates.add(criteriaBuilder.greaterThan(root.get("dueDate"), dueDate));
+                    break;
+                case ">=":
+                    predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("dueDate"), dueDate));
+                    break;
+                case "<":
+                    predicates.add(criteriaBuilder.lessThan(root.get("dueDate"), dueDate));
+                    break;
+                case "<=":
+                    predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("dueDate"), dueDate));
+                    break;
+                default:
+                    predicates.add(criteriaBuilder.equal(root.get("dueDate"), dueDate)); // Default to `=`
+            }
+        }
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     }
+
 }

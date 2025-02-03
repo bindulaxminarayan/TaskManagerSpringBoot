@@ -58,16 +58,27 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TasksResponseDTO getTasks(String status, String priority) throws BadRequestException {
+    public TasksResponseDTO getTasks(String status, String priority, String dueDateStr) throws BadRequestException {
         TasksResponseDTO tasksResponse = new TasksResponseDTO();
 
         // Parse the status and priority inputs into enums
         TaskStatus taskStatus = parseEnumValue(status, TaskStatus.class, "Invalid task status: " + status);
         TaskPriority taskPriority = parseEnumValue(priority, TaskPriority.class, "Invalid task priority: " + priority);
+        //Convert dueDate from String to Date
+        String dueDateOperator = "="; // Default is equality
+        LocalDate dueDate = null;
 
-//        // Fetch tasks dynamically based on filters
-//        List<TaskEntity> tasks = fetchTasks(taskStatus, taskPriority);
-        List<TaskEntity> tasks = taskRepository.findAll(new TaskSpecification(taskStatus, taskPriority));
+        if (dueDateStr != null && !dueDateStr.isBlank()) {
+            if (dueDateStr.startsWith(">=") || dueDateStr.startsWith("<=") ||
+                    dueDateStr.startsWith(">") || dueDateStr.startsWith("<")) {
+                dueDateOperator = dueDateStr.substring(0, dueDateStr.contains("=") ? 2 : 1); // Extract operator
+                dueDate = LocalDate.parse(dueDateStr.substring(dueDateOperator.length())); // Extract date
+            } else {
+                dueDate = LocalDate.parse(dueDateStr); // Default case (equal)
+            }
+        }
+        //Fetch tasks
+        List<TaskEntity> tasks = taskRepository.findAll(new TaskSpecification(taskStatus, taskPriority, dueDate, dueDateOperator));
 
         // Prepare the response
         tasksResponse.setTasks(tasks);

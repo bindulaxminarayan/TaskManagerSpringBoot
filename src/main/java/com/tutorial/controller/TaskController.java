@@ -35,9 +35,10 @@ public class TaskController {
     @GetMapping("/tasks")
     public TasksResponseDTO getTasks(
             @RequestParam(value = "status", required = false) String status,
-            @RequestParam(value = "priority", required = false) String priority
+            @RequestParam(value = "priority", required = false) String priority,
+            @RequestParam(value = "due_date", required = false) String dueDate
             ) throws BadRequestException {
-        return taskService.getTasks(status, priority);
+        return taskService.getTasks(status, priority, dueDate);
     }
 
     @GetMapping("/tasks/{id}")

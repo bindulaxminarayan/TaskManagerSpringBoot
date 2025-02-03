@@ -166,7 +166,7 @@ public class TaskServiceTest {
 
 
         // Act: Call the service method
-        TasksResponseDTO result = taskService.getTasks(null, null);
+        TasksResponseDTO result = taskService.getTasks(null, null,null);
 
         // Assert: Verify results and repository interaction
         assertNotNull(result);
@@ -196,7 +196,7 @@ public class TaskServiceTest {
         when(taskRepository.findAll(any(TaskSpecification.class))).thenReturn(Arrays.asList(taskEntity2));
 
         // Act: Call the service method
-        TasksResponseDTO result = taskService.getTasks("IN_PROGRESS", null);
+        TasksResponseDTO result = taskService.getTasks("IN_PROGRESS", null,null);
 
         // Assert: Verify results and repository interaction
         assertNotNull(result);
@@ -224,7 +224,7 @@ public class TaskServiceTest {
         when(taskRepository.findAll(any(TaskSpecification.class))).thenReturn(Arrays.asList(taskEntity2));
 
         // Act: Call the service method
-        TasksResponseDTO result = taskService.getTasks(null, "CRITICAL");
+        TasksResponseDTO result = taskService.getTasks(null, "CRITICAL",null);
 
         // Assert: Verify results and repository interaction
         assertNotNull(result);
