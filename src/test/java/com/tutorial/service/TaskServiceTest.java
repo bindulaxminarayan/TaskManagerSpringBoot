@@ -49,6 +49,7 @@ public class TaskServiceTest {
     @Test
     public void createTaskWithoutNotes() throws BadRequestException {
         TaskEntity taskEntity = new TaskEntity();
+        LocalDate date = LocalDate.now();
         LocalDateTime taskDate = LocalDateTime.now();
         taskEntity.setId(1L);
         taskEntity.setTaskSummary("t1");
@@ -148,6 +149,26 @@ public class TaskServiceTest {
         verify(taskRepository, times(1)).save(taskEntity);
     }
 
+    @Test
+    public void createTaskWithDueDate() throws BadRequestException {
+        LocalDate date = LocalDate.now();
+        TaskEntity taskEntity = new TaskEntity();
+        taskEntity.setId(1L);
+        taskEntity.setTaskSummary("t1");
+        taskEntity.setDueDate(date);
+
+        when(taskRepository.save(taskEntity)).thenReturn(taskEntity);
+        TaskEntity resultEntity = taskService.createTask(taskEntity);
+
+        assertNotNull(resultEntity);
+        assertEquals(resultEntity.getId(), taskEntity.getId());
+        assertEquals(resultEntity.getTaskSummary(), taskEntity.getTaskSummary());
+        assertEquals(resultEntity.getDueDate(), taskEntity.getDueDate());
+
+        // Verify that repository method was called once
+        verify(taskRepository, times(1)).save(taskEntity);
+    }
+
 
     @Test
     public void findAllTestViaFetchTasks() throws BadRequestException {
@@ -164,11 +185,7 @@ public class TaskServiceTest {
         List<TaskEntity> mockTasks = Arrays.asList(taskEntity1, taskEntity2);
         when(taskRepository.findAll(any(TaskSpecification.class))).thenReturn(mockTasks);
 
-
-        // Act: Call the service method
         TasksResponseDTO result = taskService.getTasks(null, null,null);
-
-        // Assert: Verify results and repository interaction
         assertNotNull(result);
         assertEquals(2, result.getTasks().size()); // Verify size of returned list
         assertEquals("t1", result.getTasks().get(0).getTaskSummary()); // Verify first task name
@@ -176,9 +193,7 @@ public class TaskServiceTest {
 
         // Verify repository method was called exactly once
         verify(taskRepository, times(1)).findAll(any(TaskSpecification.class));
-
     }
-
 
     @Test
     public void getTaskByStatus() throws BadRequestException {
@@ -192,20 +207,14 @@ public class TaskServiceTest {
         taskEntity2.setTaskSummary("t2");
         taskEntity2.setTaskStatus(TaskStatus.IN_PROGRESS);
 
-        List<TaskEntity> mockTasks = Arrays.asList(taskEntity1, taskEntity2);
         when(taskRepository.findAll(any(TaskSpecification.class))).thenReturn(Arrays.asList(taskEntity2));
-
-        // Act: Call the service method
         TasksResponseDTO result = taskService.getTasks("IN_PROGRESS", null,null);
-
-        // Assert: Verify results and repository interaction
         assertNotNull(result);
         assertEquals(1, result.getTasks().size()); // Verify size of returned list
         assertEquals("t2", result.getTasks().get(0).getTaskSummary()); // Verify second task name
 
         // Verify repository method was called exactly once
         verify(taskRepository, times(1)).findAll(any(TaskSpecification.class));
-
     }
 
     @Test
@@ -220,20 +229,36 @@ public class TaskServiceTest {
         taskEntity2.setTaskSummary("t2");
         taskEntity2.setTaskPriority(TaskPriority.CRITICAL);
 
-        List<TaskEntity> mockTasks = Arrays.asList(taskEntity1, taskEntity2);
         when(taskRepository.findAll(any(TaskSpecification.class))).thenReturn(Arrays.asList(taskEntity2));
-
-        // Act: Call the service method
         TasksResponseDTO result = taskService.getTasks(null, "CRITICAL",null);
-
-        // Assert: Verify results and repository interaction
         assertNotNull(result);
         assertEquals(1, result.getTasks().size()); // Verify size of returned list
         assertEquals("t2", result.getTasks().get(0).getTaskSummary()); // Verify second task name
 
         // Verify repository method was called exactly once
         verify(taskRepository, times(1)).findAll(any(TaskSpecification.class));
+    }
 
+    @Test
+    public void getTaskByDueDate() throws BadRequestException {
+        LocalDate dueDate = LocalDate.now();
+        TaskEntity taskEntity1 = new TaskEntity();
+        taskEntity1.setId(1L);
+        taskEntity1.setTaskSummary("t1");
+        taskEntity1.setDueDate(dueDate);
+       //Mock Task Repository
+        TaskSpecification specification = new TaskSpecification(null, null, dueDate,null);
+        when(taskRepository.findAll(any(specification.getClass()))).thenReturn(Arrays.asList(taskEntity1));
+
+        //Validate the taskservice
+        TasksResponseDTO result = taskService.getTasks(null, null,dueDate.toString());
+        assertNotNull(result);
+        assertEquals(1, result.getTasks().size()); // Verify size of returned list
+        assertEquals("t1", result.getTasks().get(0).getTaskSummary());
+        assertEquals(dueDate,result.getTasks().get(0).getDueDate());
+
+        // Verify repository method was called exactly once
+        verify(taskRepository, times(1)).findAll(any(specification.getClass()));
     }
 
     @Test

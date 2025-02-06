@@ -49,14 +49,6 @@ public class TaskServiceImpl implements TaskService {
         return createdTask;
     }
 
-    public TasksResponseDTO findAll() {
-        TasksResponseDTO tasksResponse = new TasksResponseDTO();
-        List<TaskEntity> tasks = taskRepository.findAll();
-        tasksResponse.setTasks(tasks);
-        tasksResponse.setTotalCount(tasks.size());
-        return tasksResponse;
-    }
-
     @Override
     public TasksResponseDTO getTasks(String status, String priority, String dueDateStr) throws BadRequestException {
         TasksResponseDTO tasksResponse = new TasksResponseDTO();
@@ -71,6 +63,7 @@ public class TaskServiceImpl implements TaskService {
         if (dueDateStr != null && !dueDateStr.isBlank()) {
             if (dueDateStr.startsWith(">=") || dueDateStr.startsWith("<=") ||
                     dueDateStr.startsWith(">") || dueDateStr.startsWith("<")) {
+                logger.debug("Due date Operator: "+dueDateOperator);
                 dueDateOperator = dueDateStr.substring(0, dueDateStr.contains("=") ? 2 : 1); // Extract operator
                 dueDate = LocalDate.parse(dueDateStr.substring(dueDateOperator.length())); // Extract date
             } else {

@@ -11,8 +11,6 @@ import java.util.Optional;
 public interface TaskService {
     TaskEntity createTask(TaskEntity task) throws BadRequestException;
 
-    TasksResponseDTO findAll();
-
     TasksResponseDTO getTasks(String status, String priority, String dueDate) throws BadRequestException;
 
     Optional<TaskEntity> getTaskById(Long taskId);

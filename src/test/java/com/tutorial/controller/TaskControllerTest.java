@@ -14,10 +14,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.config.Task;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -54,11 +54,11 @@ public class TaskControllerTest {
         taskResponse.setTasks(tasks);
         taskResponse.setTotalCount(2);
 
-        when(taskService.getTasks(null,null,null)).thenReturn(taskResponse);
-        TasksResponseDTO expectedTasks = taskController.getTasks(null,null, null);
+        when(taskService.getTasks(null, null, null)).thenReturn(taskResponse);
+        TasksResponseDTO expectedTasks = taskController.getTasks(null, null, null);
         assertEquals(expectedTasks, taskResponse);
         assertEquals(2, taskResponse.getTotalCount());
-        verify(taskService, times(1)).getTasks(null,null,null);
+        verify(taskService, times(1)).getTasks(null, null, null);
     }
 
     @Test
@@ -76,12 +76,13 @@ public class TaskControllerTest {
         taskResponse.setTasks(tasks);
         taskResponse.setTotalCount(1);
 
-        when(taskService.getTasks("IN_PROGRESS",null,null)).thenReturn(taskResponse);
-        TasksResponseDTO expectedTasks = taskController.getTasks("IN_PROGRESS",null,null);
+        when(taskService.getTasks("IN_PROGRESS", null, null)).thenReturn(taskResponse);
+        TasksResponseDTO expectedTasks = taskController.getTasks("IN_PROGRESS", null, null);
         assertEquals(expectedTasks, taskResponse);
         assertEquals(1, taskResponse.getTotalCount());
-        verify(taskService, times(1)).getTasks("IN_PROGRESS",null,null);
+        verify(taskService, times(1)).getTasks("IN_PROGRESS", null, null);
     }
+
     @Test
     public void testGetTasksPriority() throws BadRequestException {
         TaskEntity t1 = new TaskEntity();
@@ -97,11 +98,11 @@ public class TaskControllerTest {
         taskResponse.setTasks(tasks);
         taskResponse.setTotalCount(1);
 
-        when(taskService.getTasks(null,"CRITICAL",null)).thenReturn(taskResponse);
-        TasksResponseDTO expectedTasks = taskController.getTasks(null,"CRITICAL",null);
+        when(taskService.getTasks(null, "CRITICAL", null)).thenReturn(taskResponse);
+        TasksResponseDTO expectedTasks = taskController.getTasks(null, "CRITICAL", null);
         assertEquals(expectedTasks, taskResponse);
         assertEquals(1, taskResponse.getTotalCount());
-        verify(taskService, times(1)).getTasks(null,"CRITICAL",null);
+        verify(taskService, times(1)).getTasks(null, "CRITICAL", null);
     }
 
     @Test
@@ -120,11 +121,11 @@ public class TaskControllerTest {
         taskResponse.setTasks(tasks);
         taskResponse.setTotalCount(1);
 
-        when(taskService.getTasks(null,"CRITICAL",null)).thenReturn(taskResponse);
-        TasksResponseDTO expectedTasks = taskController.getTasks(null,"CRITICAL",null);
+        when(taskService.getTasks(null, "CRITICAL", null)).thenReturn(taskResponse);
+        TasksResponseDTO expectedTasks = taskController.getTasks(null, "CRITICAL", null);
         assertEquals(expectedTasks, taskResponse);
         assertEquals(1, taskResponse.getTotalCount());
-        verify(taskService, times(1)).getTasks(null,"CRITICAL",null);
+        verify(taskService, times(1)).getTasks(null, "CRITICAL", null);
     }
 
     @Test
@@ -159,4 +160,32 @@ public class TaskControllerTest {
         verify(taskService, times(1)).createTask(t1);
     }
 
+    @Test
+    public void testUpdateTask() throws BadRequestException {
+        //Create a task
+        TaskEntity t1 = new TaskEntity();
+        t1.setTaskSummary("update task1");
+        t1.setTaskStatus(TaskStatus.NEW);
+        when(taskService.createTask(t1)).thenReturn(t1);
+        TaskEntity createdTask = taskController.createTask(t1);
+        //Request for update task
+        Map<String, Object> updateTaskRequest = new HashMap<>();
+        updateTaskRequest.put("status", "IN_PROGRESS");
+        TaskEntity updatedTask = new TaskEntity();
+        updatedTask.setTaskSummary(t1.getTaskSummary());
+        updatedTask.setTaskStatus(TaskStatus.IN_PROGRESS);
+        //Expected Response for update Tasks
+        ResponseEntity<TaskEntity> expectedResponse = ResponseEntity.ok(updatedTask);
+        //Stub update task
+        when(taskService.updateTask(t1.getId(), updateTaskRequest)).thenReturn(updatedTask);
+        ResponseEntity<TaskEntity> actualResponse = taskController.updateTaskById(createdTask.getId(), updateTaskRequest);
+
+        //Verify response and response code
+        assertEquals(200, actualResponse.getStatusCode().value());
+        assertEquals(TaskStatus.IN_PROGRESS, Objects.requireNonNull(actualResponse.getBody()).getTaskStatus());
+
+        //Verify the invocations
+        verify(taskService, times(1)).createTask(t1);
+        verify(taskService, times(1)).updateTask(t1.getId(), updateTaskRequest);
+    }
 }
