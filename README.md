@@ -13,6 +13,14 @@ the properties.
 Compile and execute Unit Tests: mvn clean verify
 Start the application: mvn spring-boot:run
 
+# How to run in Docker container
+From the root directly, run the below commands
+mvn clean package - This creates a jar file in the target folder
+docker build -t taskmanager . - This creates a docker image to run
+docker run -d -p 8080:8080 taskmanager - This runs the docker image
+
+Note: The application will be available at http://localhost:8080
+
 # API Endpoints Supported:
 
 ## Create a task
